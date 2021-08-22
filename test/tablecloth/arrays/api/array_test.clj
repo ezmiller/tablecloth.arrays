@@ -8,16 +8,19 @@
 
 (deftest array-test
   (testing "properties of returned 1d collection"
-    (is (= :buffer
-           (dtype/datatype (array [1 2 3] :int8))))
-    (is (= true
-           (dtype/reader?
-            (array [1 2 3] :int8)))))
+    (let [ary (array [1 2 3] :int8)]
+      (is (= :buffer
+             (dtype/datatype ary)))
+      (is (= true
+             (dtype/reader? ary)))))
   (testing "properties of returned nd collection"
-    (is (= :tensor
-           (dtype/datatype (array [[1 2]
-                                   [3 4]]
-                                  :int8))))))
+    (let [ary (array [[1 2]
+                      [3 4]]
+                     :int8)]
+      (is (= :tensor
+             (dtype/datatype ary)))
+      (is (= true
+             (dtype/reader? ary))))))
 
 (deftest is-array-test
   (is (= true
@@ -42,4 +45,3 @@
            (-> (array [1 2 3] :int8)
                (dtype/make-container)
                (array-is :array-buffer))))))
-
