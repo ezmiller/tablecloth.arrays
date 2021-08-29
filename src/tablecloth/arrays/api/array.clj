@@ -84,7 +84,7 @@
 
   (dtype/datatype (dtype/clone a-reader));; => :array-buffer
   
-(dtype/datatype [1 2 3])
+  (dtype/datatype [1 2 3])
 
 
   )
