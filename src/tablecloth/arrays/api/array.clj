@@ -8,6 +8,11 @@
       (tensor/->tensor data :datatype datatype)
       (dtype/->reader data datatype))))
 
+(defmacro compute-array [shape datatype read-op]
+  (if (> (count shape) 1)
+    `(tensor/compute-tensor ~shape ~read-op ~datatype)
+    `(dtype/make-reader ~datatype ~(first shape) ~read-op)))
+
 (defn is-array [item]
   (= :buffer
      (dtype/datatype item)))
@@ -85,6 +90,7 @@
   (dtype/datatype (dtype/clone a-reader));; => :array-buffer
   
   (dtype/datatype [1 2 3])
+
 
 
   )
