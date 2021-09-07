@@ -1,0 +1,5 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.3"}
+        ;; scicloj/tablecloth {:mvn/version "6.006"}
+        ezmiller/tablecloth.arrays {:local/root "../"}
+        }}
