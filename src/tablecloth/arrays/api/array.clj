@@ -2,16 +2,42 @@
   (:require [tech.v3.datatype :as dtype]
             [tech.v3.tensor :as tensor]))
 
-(defn array [data datatype]
-  (let [shape (dtype/shape data)]
-    (if (> (count shape) 1)
-      (tensor/->tensor data :datatype datatype)
-      (dtype/->reader data datatype))))
+(defn array
+  ([data]
+   (array data :object))
+  ([data datatype]
+   (let [shape (dtype/shape data)]
+     (if (> (count shape) 1)
+       (tensor/->tensor data :datatype datatype)
+       (dtype/->reader data datatype)))))
 
-(defmacro compute-array [shape datatype read-op]
-  (if (> (count shape) 1)
-    `(tensor/compute-tensor ~shape ~read-op ~datatype)
-    `(dtype/make-reader ~datatype ~(first shape) ~read-op)))
+(defmacro compute-array
+  ([shape read-op]
+   `(compute-array ~shape ~read-op :object))
+  ([shape read-op datatype]
+   (if (> (count shape) 1)
+     `(tensor/compute-tensor ~shape ~read-op ~datatype)
+     `(dtype/make-reader ~datatype ~(first shape) ~read-op))))
+
+(defmacro zeros
+  ([shape]
+   `(zeros ~shape :int))
+  ([shape datatype]
+   `(compute-array ~shape
+                   (if (> (count ~shape) 1)
+                     (constantly 0)
+                     0)
+                   ~datatype)))
+
+(defmacro ones
+  ([shape]
+   `(zeros ~shape :int))
+  ([shape datatype]
+   `(compute-array ~shape
+                   (if (> (count ~shape) 1)
+                     (constantly 1)
+                     1)
+                   ~datatype)))
 
 (defn is-array [item]
   (= :buffer
@@ -21,9 +47,12 @@
   (= container-type
      (dtype/datatype item)))
 
-(defn contains [item datatype]
-  (= datatype
-     (dtype/elemwise-datatype item)))
+(defn contains?
+  ([item]
+   (dtype/elemwise-datatype item))
+  ([item datatype]
+   (= datatype
+      (dtype/elemwise-datatype item))))
 
 (comment
   (require '[tech.v3.datatype.datetime :as datetime])
@@ -50,8 +79,6 @@
   (def ary (array [1 2 3] :int8))
 
   (type ary);; => tech.v3.datatype.base$eval10951$fn__10980$fn$reify__10989
-
-  ()
 
   (is-array ary)
   (array-is ary :reader) 
